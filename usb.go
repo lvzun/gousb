@@ -121,7 +121,6 @@ See Also
 
 For more information about USB protocol and handling USB devices,
 see the excellent "USB in a nutshell" guide: http://www.beyondlogic.org/usbnutshell/
-
 */
 package gousb
 
@@ -167,6 +166,29 @@ func newContextWithImpl(impl libusbIntf) *Context {
 // NewContext returns a new Context instance.
 func NewContext() *Context {
 	return newContextWithImpl(libusbImpl{})
+}
+
+func (c *Context) ListDevices() ([]*Device, error) {
+	if c.ctx == nil {
+		return nil, errors.New("OpenDevices called on a closed or uninitialized Context")
+	}
+	list, err := c.libusb.getDevices(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var ret []*Device
+	for _, dev := range list {
+		desc, err := c.libusb.getDeviceDesc(dev)
+		defer c.libusb.dereference(dev)
+		if err != nil {
+			continue
+		}
+
+		o := &Device{handle: nil, ctx: c, Desc: desc}
+		ret = append(ret, o)
+	}
+	return ret, nil
 }
 
 // OpenDevices calls opener with each enumerated device.

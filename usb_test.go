@@ -15,7 +15,10 @@
 
 package gousb
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestOPenDevices(t *testing.T) {
 	t.Parallel()
@@ -92,5 +95,34 @@ func TestOpenDeviceWithVIDPID(t *testing.T) {
 			}
 			dev.Close()
 		}
+	}
+}
+
+func TestContext_ListDevices(t *testing.T) {
+	tests := []struct {
+		name    string
+		want    []*Device
+		wantErr bool
+	}{
+		{
+			name:    "test ListDevices",
+			want:    []*Device{},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := newContextWithImpl(newFakeLibusb())
+
+			got, err := c.ListDevices()
+			t.Logf("got:%+v", got)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ListDevices() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ListDevices() got = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
