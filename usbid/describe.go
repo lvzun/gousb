@@ -27,7 +27,7 @@ package usbid
 import (
 	"fmt"
 
-	"github.com/lvzun/gousb"
+	"github.com/google/gousb"
 )
 
 // Describe returns a human readable string describing the vendor and product

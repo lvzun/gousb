@@ -21,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lvzun/gousb"
+	"github.com/google/gousb"
 )
 
 const (

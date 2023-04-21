@@ -14,7 +14,7 @@
 
 package usbid
 
-import "github.com/lvzun/gousb"
+import "github.com/google/gousb"
 
 const testDBPath = "testdata/testdb.txt"
 
